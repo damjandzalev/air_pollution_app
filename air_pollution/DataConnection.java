@@ -17,11 +17,12 @@ import java.util.*;
 
 class DataConnection {
     String urlDatabase = "jdbc:postgresql://localhost:5432/postgres";
+    //String urlDatabase = "jdbc:postgresql://localhost:5434/nbp_2020_p21";
     String userDatabase;
     String passwordDatabase;
     Connection conn = null;
     //private String cities[] = {"bitola", "gostivar", "kichevo", "kumanovo", "novoselo", "ohrid", "shtip", "skopje", "strumica", "tetovo"};
-    private String[] cities = {"skopje"};
+    private String cities[] = {"skopje"};
 
     public DataConnection(String userDatabase, String passwordDatabase) {
         this.userDatabase = userDatabase;
@@ -113,38 +114,12 @@ class DataConnection {
             conn.commit();
             Statement stmt;
             ResultSet rs;
-            conn.setAutoCommit(false);
+            conn.setAutoCommit(true);
             System.out.println("Normalizing the data in the database...");
-            sqlQuery = "SELECT air_pollution.normalizeSimPoints('imports.simulation_data"+creationTime+"')";
-            System.out.println("Inserting new points in simulation_point.");
+            sqlQuery = "SELECT air_pollution.normalizeSimData('imports.simulation_data"+creationTime+"', '"+run_time+"')";
             stmt = conn.createStatement();
             rs = stmt.executeQuery(sqlQuery);
             conn.commit();
-            sqlQuery = "SELECT air_pollution.normalizeSimRuns('imports.simulation_data"+creationTime+"', '"+run_time+"')";
-            System.out.println("Inserting new rows in simulation_run.");
-            stmt = conn.createStatement();
-            rs = stmt.executeQuery(sqlQuery);
-            conn.commit();
-
-
-            sqlQuery = "SELECT air_pollution.normalizeSimDataView('imports.simulation_data"+creationTime+"', '"+run_time+"')";
-            System.out.println("Creating view for the sim data with the id's from the new runs and points.");
-            stmt = conn.createStatement();
-            rs = stmt.executeQuery(sqlQuery);
-            conn.commit();
-
-            sqlQuery = "SELECT air_pollution.normalizeSimDataInsert('"+run_time+"')";
-            System.out.println("Inserting new rows in prediction_pollutant.");
-            stmt = conn.createStatement();
-            rs = stmt.executeQuery(sqlQuery);
-            conn.commit();
-            for(int i = 1; i <= 11; ++i){
-                sqlQuery = "SELECT air_pollution.normalizeSimDataUpdate("+i+", '"+run_time+"')";
-                System.out.println("Inserting values in the new rows for the pollutant with "+i+" id.");
-                stmt = conn.createStatement();
-                rs = stmt.executeQuery(sqlQuery);
-                conn.commit();
-            }
             System.out.println("Done!");
 
             long end_time = System.currentTimeMillis();
@@ -275,6 +250,8 @@ class DataConnection {
                 }
             }
             System.out.println(String.format("Inserting %d rows, %d total.", k%5000, k));
+            conn.commit();
+            pstmt.executeBatch();
             System.out.println("Normalizing measurements data.");
             Statement stmt;
             ResultSet rs;
@@ -283,8 +260,6 @@ class DataConnection {
             System.out.println(sqlQuery);
             stmt = conn.createStatement();
             rs = stmt.executeQuery(sqlQuery);
-            conn.commit();
-            pstmt.executeBatch();
             conn.commit();
             long end_time = System.currentTimeMillis();
             long hours = (end_time-start_time)/3600000;
@@ -418,15 +393,6 @@ class DataConnection {
             System.out.println(String.format("Inserting %d rows, %d total.", k%5000, k));
             pstmt.executeBatch();
             conn.commit();
-            System.out.println("Normalizing sensor data.");
-            Statement stmt;
-            ResultSet rs;
-            conn.setAutoCommit(false);
-            /*sqlQuery = "SELECT air_pollution.normalizeSensorData('"+creationTime+"')";
-            System.out.println(sqlQuery);
-            stmt = conn.createStatement();
-            rs = stmt.executeQuery(sqlQuery);
-            conn.commit();*/
             long end_time = System.currentTimeMillis();
             long hours = (end_time-start_time)/3600000;
             long mins = ((end_time-start_time)%3600000)/60000;
