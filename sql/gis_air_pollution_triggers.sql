@@ -267,78 +267,18 @@ BEGIN
     PERFORM air_pollution.normalizeSimPoints(tbl);
     PERFORM air_pollution.normalizeSimRuns(tbl, run_time);
     PERFORM air_pollution.normalizeSimDataView(tbl,run_time);
-    EXECUTE '
-            INSERT INTO air_pollution.prediction_pollutant(SIMULATION_RUN_ID, SIMULATION_POINT_ID)
-            SELECT DISTINCT SIM_R_ID, SIM_P_ID
-            FROM
-                air_pollution.SIM_DATA' || concat(substr(run_time,0,5),substr(run_time,6,2),substr(run_time,9,2));
-    EXECUTE '
-            UPDATE air_pollution.prediction_pollutant
-            SET P1 = amount
-            FROM air_pollution.SIM_DATA' || concat(substr(run_time,0,5),substr(run_time,6,2),substr(run_time,9,2)) ||' as SIM_DATA
-            WHERE SIM_DATA.pollutant_id = 1 AND
-                  prediction_pollutant.simulation_point_id = SIM_DATA.SIM_P_ID AND
-                  prediction_pollutant.simulation_run_id = SIM_DATA.SIM_R_ID
-            UPDATE air_pollution.prediction_pollutant
-            SET P2 = amount
-            FROM air_pollution.SIM_DATA' || concat(substr(run_time,0,5),substr(run_time,6,2),substr(run_time,9,2)) ||' as SIM_DATA
-            WHERE SIM_DATA.pollutant_id = 2 AND
-                  prediction_pollutant.simulation_point_id = SIM_DATA.SIM_P_ID AND
-                  prediction_pollutant.simulation_run_id = SIM_DATA.SIM_R_ID
-            UPDATE air_pollution.prediction_pollutant
-            SET P3 = amount
-            FROM air_pollution.SIM_DATA' || concat(substr(run_time,0,5),substr(run_time,6,2),substr(run_time,9,2)) ||' as SIM_DATA
-            WHERE SIM_DATA.pollutant_id = 3 AND
-                  prediction_pollutant.simulation_point_id = SIM_DATA.SIM_P_ID AND
-                  prediction_pollutant.simulation_run_id = SIM_DATA.SIM_R_ID
-            UPDATE air_pollution.prediction_pollutant
-            SET P4 = amount
-            FROM air_pollution.SIM_DATA' || concat(substr(run_time,0,5),substr(run_time,6,2),substr(run_time,9,2)) ||' as SIM_DATA
-            WHERE SIM_DATA.pollutant_id = 4 AND
-                  prediction_pollutant.simulation_point_id = SIM_DATA.SIM_P_ID AND
-                  prediction_pollutant.simulation_run_id = SIM_DATA.SIM_R_ID
-            UPDATE air_pollution.prediction_pollutant
-            SET P5 = amount
-            FROM air_pollution.SIM_DATA' || concat(substr(run_time,0,5),substr(run_time,6,2),substr(run_time,9,2)) ||' as SIM_DATA
-            WHERE SIM_DATA.pollutant_id = 5 AND
-                  prediction_pollutant.simulation_point_id = SIM_DATA.SIM_P_ID AND
-                  prediction_pollutant.simulation_run_id = SIM_DATA.SIM_R_ID
-            UPDATE air_pollution.prediction_pollutant
-            SET P6 = amount
-            FROM air_pollution.SIM_DATA' || concat(substr(run_time,0,5),substr(run_time,6,2),substr(run_time,9,2)) ||' as SIM_DATA
-            WHERE SIM_DATA.pollutant_id = 6 AND
-                  prediction_pollutant.simulation_point_id = SIM_DATA.SIM_P_ID AND
-                  prediction_pollutant.simulation_run_id = SIM_DATA.SIM_R_ID
-            UPDATE air_pollution.prediction_pollutant
-            SET P7 = amount
-            FROM air_pollution.SIM_DATA' || concat(substr(run_time,0,5),substr(run_time,6,2),substr(run_time,9,2)) ||' as SIM_DATA
-            WHERE SIM_DATA.pollutant_id = 7 AND
-                  prediction_pollutant.simulation_point_id = SIM_DATA.SIM_P_ID AND
-                  prediction_pollutant.simulation_run_id = SIM_DATA.SIM_R_ID
-            UPDATE air_pollution.prediction_pollutant
-            SET P8 = amount
-            FROM air_pollution.SIM_DATA' || concat(substr(run_time,0,5),substr(run_time,6,2),substr(run_time,9,2)) ||' as SIM_DATA
-            WHERE SIM_DATA.pollutant_id = 8 AND
-                  prediction_pollutant.simulation_point_id = SIM_DATA.SIM_P_ID AND
-                  prediction_pollutant.simulation_run_id = SIM_DATA.SIM_R_ID
-            UPDATE air_pollution.prediction_pollutant
-            SET P9 = amount
-            FROM air_pollution.SIM_DATA' || concat(substr(run_time,0,5),substr(run_time,6,2),substr(run_time,9,2)) ||' as SIM_DATA
-            WHERE SIM_DATA.pollutant_id = 9 AND
-                  prediction_pollutant.simulation_point_id = SIM_DATA.SIM_P_ID AND
-                  prediction_pollutant.simulation_run_id = SIM_DATA.SIM_R_ID
-            UPDATE air_pollution.prediction_pollutant
-            SET P10 = amount
-            FROM air_pollution.SIM_DATA' || concat(substr(run_time,0,5),substr(run_time,6,2),substr(run_time,9,2)) ||' as SIM_DATA
-            WHERE SIM_DATA.pollutant_id = 10 AND
-                  prediction_pollutant.simulation_point_id = SIM_DATA.SIM_P_ID AND
-                  prediction_pollutant.simulation_run_id = SIM_DATA.SIM_R_ID
-            UPDATE air_pollution.prediction_pollutant
-            SET P11 = amount
-            FROM air_pollution.SIM_DATA' || concat(substr(run_time,0,5),substr(run_time,6,2),substr(run_time,9,2)) ||' as SIM_DATA
-            WHERE SIM_DATA.pollutant_id = 11 AND
-                  prediction_pollutant.simulation_point_id = SIM_DATA.SIM_P_ID AND
-                  prediction_pollutant.simulation_run_id = SIM_DATA.SIM_R_ID';
+    PERFORM air_pollution.normalizeSimDataInsert(run_time);
+    PERFORM air_pollution.normalizesimdataupdate(1,run_time);
+    PERFORM air_pollution.normalizesimdataupdate(2,run_time);
+    PERFORM air_pollution.normalizesimdataupdate(3,run_time);
+    PERFORM air_pollution.normalizesimdataupdate(4,run_time);
+    PERFORM air_pollution.normalizesimdataupdate(5,run_time);
+    PERFORM air_pollution.normalizesimdataupdate(6,run_time);
+    PERFORM air_pollution.normalizesimdataupdate(7,run_time);
+    PERFORM air_pollution.normalizesimdataupdate(8,run_time);
+    PERFORM air_pollution.normalizesimdataupdate(9,run_time);
+    PERFORM air_pollution.normalizesimdataupdate(10,run_time);
+    PERFORM air_pollution.normalizesimdataupdate(11,run_time);
     RETURN FALSE;
 END
 $BODY$
@@ -375,7 +315,7 @@ LANGUAGE plpgsql;
 CREATE OR REPLACE FUNCTION air_pollution.normalizeMeasurementDataView(run_time TEXT) RETURNS BOOLEAN AS
 $BODY$
 BEGIN
-    EXECUTE 'CREATE OR REPLACE VIEW air_pollution.measurements20200620 AS(
+    EXECUTE 'CREATE OR REPLACE VIEW air_pollution.measurements'||run_time||' AS(
     SELECT pollutant_id,
        SENSOR.ID AS sensor_id,
        CASE WHEN 0 = SUM((30-ABS(EXTRACT(''MINUTE'' FROM air_pollution.normalizemeasurementtime(stamp)-air_pollution.normalizemeasurementtimerounded(stamp)))))
@@ -429,6 +369,7 @@ LANGUAGE plpgsql;
 CREATE OR REPLACE FUNCTION air_pollution.normalizeMeasurementData (run_time TEXT) RETURNS BOOLEAN AS
 $BODY$
 BEGIN
+    PERFORM air_pollution.insertSensors(run_time);
     PERFORM air_pollution.normalizeMeasurementDataView(run_time);
     PERFORM air_pollution.normalizeMeasurementDataInsert(run_time);
     RETURN FALSE;
@@ -452,16 +393,6 @@ BEGIN
             (SELECT DESCRIPTION, ROUND(LONGITUDE::NUMERIC, 7) as longitude, ROUND(LATITUDE::NUMERIC, 7) as latitude
             FROM IMPORTS.sensors'|| run_time ||') AS T2 ON T1.latitude = T2.latitude AND
                                                    T1.longitude = T2.longitude';
-    RETURN FALSE;
-END
-$BODY$
-LANGUAGE plpgsql;
-
-
-CREATE OR REPLACE FUNCTION air_pollution.normalizeSensorData (run_time TEXT) RETURNS BOOLEAN AS
-$BODY$
-BEGIN
-    PERFORM air_pollution.insertSensors(run_time);
     RETURN FALSE;
 END
 $BODY$
