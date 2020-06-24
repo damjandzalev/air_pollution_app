@@ -1,0 +1,55 @@
+import java.io.IOException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.PrimitiveIterator;
+import java.util.Scanner;
+import java.util.stream.IntStream;
+public class AirPollutionAppApplication {
+	@SuppressWarnings("resource")
+	public static void main(String args[]) throws IOException {
+		//Instantiating the URL class
+		URL url = new URL("https://skopje.pulse.eco/rest/sensor");
+		//Retrieving the contents of the specified page
+		Scanner sc = new Scanner(url.openStream());
+		//Instantiating the StringBuffer class to hold the result
+		StringBuffer sb = new StringBuffer();
+		while(sc.hasNext()) {
+			sb.append(sc.next());
+			//System.out.println(sc.next());
+		}
+		//Retrieving the String from the String Buffer object
+		String result = sb.toString();
+		System.out.println(result);
+		//Removing the HTML tags
+		result = result.replaceAll("<[^>]*>", "");
+		List<String> l = new ArrayList<String>();
+		IntStream a = sb.chars();
+		PrimitiveIterator.OfInt it = a.iterator(); 
+		while(it.hasNext()){
+			int c = it.nextInt();
+			String s = "";
+			if((char) c == '{'){
+				if(it.hasNext()){
+					c = (char)it.nextInt();
+				}
+				else{
+					break;
+				}
+				while(c != '}'){
+					s = s+String.format("%c", (char)c);
+					if(it.hasNext()){
+						c = (char)it.nextInt();
+					}
+					else{
+						break;
+					}
+				}
+				l.add(s);
+			}
+		}
+		for(String s : l){
+			System.out.println(s);
+		}
+	}
+}
